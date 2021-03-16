@@ -14,3 +14,5 @@ var fileContent = evaluateSafely_1["default"]({
 });
 var lines = fileContent.split("\n");
 var instructions = lines.map(CPU_1["default"].parseLine);
+var cpu = new CPU_1["default"]();
+cpu.setInstructions(instructions).run();
