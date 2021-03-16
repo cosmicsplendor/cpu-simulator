@@ -1,13 +1,13 @@
 import handleError from "../helpers/handleError"
 
-interface Stack {
+export interface Stack {
     content: number[]
     getLength: (arg: void) => number
     getLastElement: (arg: void) => number
     push: (arg: number) => void
     pop: (arg: string) => number
 }
-interface Instruction {
+export interface Instruction {
     name: string
     param?: string | number;
     label?: string

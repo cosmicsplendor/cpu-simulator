@@ -2,7 +2,7 @@ push 10
 push 10
 stack
 nop jumping to the line labelled with line8
-jumpnz lin11
+jumpz lin11
 push 5
 stack
 push 2

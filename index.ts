@@ -1,6 +1,6 @@
 import { readFileSync } from "fs"
 import handleError from "./helpers/handleError"
-import CPU from "./classes/CPU"
+import CPU, { Instruction } from "./classes/CPU"
 
 const filename: string = process.argv[2]
 let fileContent: string
@@ -13,7 +13,7 @@ try {
 
 const lines: string[] = fileContent.trim().split("\n")
 
-const instructions = lines.map(CPU.parseLine)
+const instructions: Instruction[] = lines.map(CPU.parseLine)
 
 const cpu = new CPU()
 
