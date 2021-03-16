@@ -1,3 +1,12 @@
+import handleError from "../helpers/handleError"
+
+interface Stack {
+    content: number[]
+    getLength: (arg: void) => number
+    getLastElement: (arg: void) => number
+    push: (arg: number) => void
+    pop: (arg: string) => number
+}
 interface Instruction {
     name: string
     param?: string | number;
@@ -7,7 +16,24 @@ interface Instruction {
 type ParseLineFunction = (line: string, index: number) => Instruction
 
 class CPU {
-    private stack: number[] = []
+    private stack: Stack = {
+        content: [],
+        getLength() {
+            return this.content.length
+        },
+        getLastElement() {
+            return this.content[ this.getLength() - 1 ]
+        },
+        push(num: number) {
+            this.content.push(num)
+        },
+        pop(caller) {
+            if (this.content.length === 0) {
+                handleError(`(${caller}): stack underflow`)
+            }
+            return this.content.pop()
+        }
+    }
     private R: number = null
     private instructions: Instruction[]
     private mathOperations: string[] = ["add", "sub", "mul", "div", "mod"]
@@ -35,15 +61,19 @@ class CPU {
         return instruction
     }
     private clear() {
-        this.stack = []
+        this.stack.content = []
         this.R = null
     }
     private jump(to: number | string) {
         let lineToJumpTo: number
-        if (typeof to === "number") { // if the to represents the line number
+        if (typeof to === "number") { // if the to arg represents the line number
             lineToJumpTo = to
-        } else if (typeof to === "string") { // if the to represents the label
+            if (lineToJumpTo < 1 || lineToJumpTo > this.instructions.length) {
+                handleError(`ERROR: undefined address ${to}`)
+            }
+        } else if (typeof to === "string") { // if the to arg represents the label
             lineToJumpTo = this.instructions.findIndex(({ label }) => label === to) + 1
+            lineToJumpTo === 0 && handleError(`(jump): undefined label ${to}`)
         }
         this.run(
             this.instructions.slice(lineToJumpTo - 1)
@@ -57,8 +87,8 @@ class CPU {
         for (const instruction of instructions) {
             const { name, param } = instruction
             if (this.mathOperations.includes(name)) {
-                const num2: number = this.stack.pop()
-                const num1: number = this.stack.pop()
+                const num2: number = this.stack.pop(name)
+                const num1: number = this.stack.pop(name)
                 switch(name) {
                     case "add":
                         this.stack.push(num1 + num2)
@@ -82,13 +112,13 @@ class CPU {
     
                     break
                     case "push":
-                        this.stack.push(Number(param))
+                        this.stack.push(Math.round(Number(param)))
                     break
                     case "pop":
-                        this.stack.pop()
+                        this.stack.pop(name)
                     break
                     case "load":
-                        this.R = this.stack.pop()
+                        this.R = this.stack.pop(name)
                     break
                     case "store":
                         this.stack.push(this.R)
@@ -97,21 +127,23 @@ class CPU {
                         return this.jump(param)
                     break
                     case "jumpz":
-                        if (this.stack[ this.stack.length - 1 ] === 0) {
+                        if (this.stack.getLastElement() === 0) {
                             return this.jump(param)
                         }
                     break
                     case "jumpnz":
-                        if (this.stack[ this.stack.length - 1 ] !== 0) {
+                        if (this.stack.getLastElement() !== 0) {
                             return this.jump(param)
                         }
                     break
                     case "print":
-                        console.log(this.stack[this.stack.length - 1])
+                        console.log(this.stack.getLastElement())
                     break
                     case "stack":
-                        console.log(this.stack)
+                        console.log(this.stack.content)
                     break
+                    default:
+                        handleError(`(${name}): unknown instruction`)
                 }
             }
             

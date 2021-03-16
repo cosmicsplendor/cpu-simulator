@@ -6,7 +6,7 @@ var evaluateSafely = function (params) {
         return fn();
     }
     catch (e) {
-        console.log(errorMsg);
+        console.log(errorMsg.concat(e.message ? " (" + e.message + ")" : ""));
         process.exit(1);
     }
 };

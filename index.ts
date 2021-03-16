@@ -1,17 +1,15 @@
 import { readFileSync } from "fs"
-import * as path from "path"
-import evaluateSafely from "./helpers/evaluateSafely"
+import handleError from "./helpers/handleError"
 import CPU from "./classes/CPU"
 
 const filename: string = process.argv[2]
+let fileContent: string
 
-const fileContent: string = evaluateSafely({ 
-    fn: () => {
-        const filePath: string = path.resolve(filename.trim())
-        return readFileSync(filePath, { encoding: "utf-8" })
-    },
-    errorMsg: `ERROR unable to open file ${filename} (ENOENT: no such file or directory, open '${filename}')`
-})
+try {
+    fileContent = readFileSync(filename, { encoding: "utf-8" })
+} catch(e) {
+    handleError(`unable to open file ${filename} (${e.message})`)
+}
 
 const lines: string[] = fileContent.trim().split("\n")
 
