@@ -8,7 +8,7 @@ var filename = process.argv[2];
 var fileContent = evaluateSafely_1["default"]({
     fn: function () {
         var filePath = path.resolve(filename.trim());
-        return fs_1.readFileSync(filePath);
+        return fs_1.readFileSync(filePath, { encoding: "utf-8" });
     },
     errorMsg: "ERROR unable to open file " + filename + " (ENOENT: no such file or directory, open '" + filename + "')"
 });

@@ -8,7 +8,7 @@ const filename: string = process.argv[2]
 const fileContent: string = evaluateSafely({ 
     fn: () => {
         const filePath: string = path.resolve(filename.trim())
-        return readFileSync(filePath)
+        return readFileSync(filePath, { encoding: "utf-8" })
     },
     errorMsg: `ERROR unable to open file ${filename} (ENOENT: no such file or directory, open '${filename}')`
 })
