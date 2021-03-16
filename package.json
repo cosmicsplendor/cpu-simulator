@@ -1,0 +1,8 @@
+{
+  "name": "cpu-simulator",
+  "version": "1.0.0",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^14.14.35"
+  }
+}
