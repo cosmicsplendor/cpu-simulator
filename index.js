@@ -12,7 +12,7 @@ var fileContent = evaluateSafely_1["default"]({
     },
     errorMsg: "ERROR unable to open file " + filename + " (ENOENT: no such file or directory, open '" + filename + "')"
 });
-var lines = fileContent.split("\n");
+var lines = fileContent.trim().split("\n");
 var instructions = lines.map(CPU_1["default"].parseLine);
 var cpu = new CPU_1["default"]();
 cpu.setInstructions(instructions).run();

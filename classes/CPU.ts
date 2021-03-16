@@ -7,15 +7,15 @@ interface Instruction {
 type ParseLineFunction = (line: string, index: number) => Instruction
 
 class CPU {
-    private stack: number[]
-    private R: number
+    private stack: number[] = []
+    private R: number = null
     private instructions: Instruction[]
     private mathOperations: string[] = ["add", "sub", "mul", "div", "mod"]
     static parseLine: ParseLineFunction = (line, index) => {
         const lineNumber: number = index + 1
         const lineMinusLabel: string = line.replace(/^.+:/, "")
-        const label: string = line.replace(lineMinusLabel, "")
-        const tokens: string[] = lineMinusLabel.split(" ")
+        const label: string = line.replace(lineMinusLabel, "").replace(":", "")
+        const tokens: string[] = lineMinusLabel.trim().split(" ")
 
         const instruction: Instruction = {
             name: tokens[0].trim(),
@@ -38,11 +38,7 @@ class CPU {
         this.stack = []
         this.R = null
     }
-    setInstructions(value: Instruction[]) {
-        this.instructions = value
-        return this
-    }
-    jump(to: number | string) {
+    private jump(to: number | string) {
         let lineToJumpTo: number
         if (typeof to === "number") { // if the to represents the line number
             lineToJumpTo = to
@@ -53,11 +49,13 @@ class CPU {
             this.instructions.slice(lineToJumpTo - 1)
         )
     }
+    setInstructions(value: Instruction[]) {
+        this.instructions = value
+        return this
+    }
     run(instructions: Instruction[] = this.instructions) {
-        this.clear()
         for (const instruction of instructions) {
             const { name, param } = instruction
-
             if (this.mathOperations.includes(name)) {
                 const num2: number = this.stack.pop()
                 const num1: number = this.stack.pop()
@@ -118,6 +116,7 @@ class CPU {
             }
             
         }
+        this.clear()
     }
 }
 

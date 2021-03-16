@@ -13,7 +13,7 @@ const fileContent: string = evaluateSafely({
     errorMsg: `ERROR unable to open file ${filename} (ENOENT: no such file or directory, open '${filename}')`
 })
 
-const lines: string[] = fileContent.split("\n")
+const lines: string[] = fileContent.trim().split("\n")
 
 const instructions = lines.map(CPU.parseLine)
 

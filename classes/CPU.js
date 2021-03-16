@@ -2,15 +2,13 @@
 exports.__esModule = true;
 var CPU = /** @class */ (function () {
     function CPU() {
+        this.stack = [];
+        this.R = null;
         this.mathOperations = ["add", "sub", "mul", "div", "mod"];
     }
     CPU.prototype.clear = function () {
         this.stack = [];
         this.R = null;
-    };
-    CPU.prototype.setInstructions = function (value) {
-        this.instructions = value;
-        return this;
     };
     CPU.prototype.jump = function (to) {
         var lineToJumpTo;
@@ -25,9 +23,12 @@ var CPU = /** @class */ (function () {
         }
         this.run(this.instructions.slice(lineToJumpTo - 1));
     };
+    CPU.prototype.setInstructions = function (value) {
+        this.instructions = value;
+        return this;
+    };
     CPU.prototype.run = function (instructions) {
         if (instructions === void 0) { instructions = this.instructions; }
-        this.clear();
         for (var _i = 0, instructions_1 = instructions; _i < instructions_1.length; _i++) {
             var instruction = instructions_1[_i];
             var name_1 = instruction.name, param = instruction.param;
@@ -90,12 +91,13 @@ var CPU = /** @class */ (function () {
                 }
             }
         }
+        this.clear();
     };
     CPU.parseLine = function (line, index) {
         var lineNumber = index + 1;
         var lineMinusLabel = line.replace(/^.+:/, "");
-        var label = line.replace(lineMinusLabel, "");
-        var tokens = lineMinusLabel.split(" ");
+        var label = line.replace(lineMinusLabel, "").replace(":", "");
+        var tokens = lineMinusLabel.trim().split(" ");
         var instruction = {
             name: tokens[0].trim(),
             lineNumber: lineNumber
